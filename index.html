@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub Équipe — Prikosnovenie</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--surface:#1a1d27;--card:#22263a;--border:#2e3350;
+  --text:#e8eaf0;--muted:#7b82a0;--accent:#6c8fff;--accent-bg:#1a2240;
+  --green:#4caf7d;--green-bg:#0d2a1a;--red:#f05c6e;--red-bg:#2a0d12;
+  --orange:#f0a030;--orange-bg:#2a1a05;--purple:#a87fff;--purple-bg:#1e1030;
+  --radius:10px;--radius-sm:6px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+a{color:inherit;text-decoration:none}
+
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:52px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+.logo{font-size:15px;font-weight:700;letter-spacing:-0.3px;color:var(--text)}
+.logo em{color:var(--accent);font-style:normal}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.member-pill{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:5px 12px}
+.member-pill label{font-size:12px;color:var(--muted)}
+.member-pill select{background:none;border:none;color:var(--text);font-size:13px;font-weight:500;cursor:pointer;outline:none}
+.member-pill select option{background:var(--card)}
+
+/* NAV */
+.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{padding:12px 16px;font-size:13px;font-weight:500;border:none;background:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:7px;transition:all 0.15s}
+.nav-btn:hover{color:var(--text)}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nav-btn .count{font-size:11px;background:var(--accent-bg);color:var(--accent);padding:1px 7px;border-radius:10px;font-weight:600}
+.nav-btn.active .count{background:var(--accent);color:#fff}
+
+/* LAYOUT */
+.content{padding:20px;max-width:1100px;margin:0 auto}
+.view{display:none}
+.view.active{display:block}
+
+/* SECTION HEADER */
+.section-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px}
+.section-title .icon{width:28px;height:28px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:15px}
+.add-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;transition:opacity 0.15s}
+.add-btn:hover{opacity:0.85}
+
+/* FILTERS */
+.filters{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.chip{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s}
+.chip:hover{border-color:var(--accent);color:var(--text)}
+.chip.active{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.stat-num{font-size:26px;font-weight:700;margin-bottom:3px}
+.stat-label{font-size:12px;color:var(--muted)}
+.stat.red .stat-num{color:var(--red)}
+.stat.green .stat-num{color:var(--green)}
+.stat.orange .stat-num{color:var(--orange)}
+.stat.blue .stat-num{color:var(--accent)}
+
+/* TASK CARDS */
+.tasks{display:flex;flex-direction:column;gap:6px}
+.task{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;display:flex;gap:12px;align-items:flex-start;transition:border-color 0.15s;cursor:pointer}
+.task:hover{border-color:var(--accent)}
+.task.done{opacity:0.4}
+.task-cb{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.task-cb.checked{background:var(--green);border-color:var(--green)}
+.task-cb.checked::after{content:'✓';color:#fff;font-size:10px;font-weight:700}
+.task-body{flex:1;min-width:0}
+.task-title{font-size:14px;font-weight:500;margin-bottom:5px;color:var(--text)}
+.task.done .task-title{text-decoration:line-through;color:var(--muted)}
+.task-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{font-size:11px;font-weight:500;padding:2px 8px;border-radius:var(--radius-sm)}
+.tag-urgent{background:var(--red-bg);color:var(--red)}
+.tag-week{background:var(--orange-bg);color:var(--orange)}
+.tag-ok{background:var(--green-bg);color:var(--green)}
+.tag-type{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
+.tag-member{background:var(--purple-bg);color:var(--purple)}
+.tag-accent{background:var(--accent-bg);color:var(--accent)}
+.task-notes{font-size:12px;color:var(--muted);margin-top:5px;font-style:italic}
+.task-date{font-size:11px;color:var(--muted)}
+
+/* SAV */
+.sav-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;margin-bottom:6px}
+.sav-header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.sav-client{font-weight:600;font-size:14px}
+.sav-cmd{font-size:12px;color:var(--muted);background:var(--surface);padding:2px 8px;border-radius:var(--radius-sm)}
+.sav-problem{font-size:13px;color:var(--text);margin-bottom:8px;line-height:1.5}
+.sav-footer{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sav-notes{font-size:12px;color:var(--muted);font-style:italic}
+
+/* CLIENTS */
+.client-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;display:flex;gap:12px;align-items:flex-start;margin-bottom:6px;transition:border-color 0.15s}
+.client-card:hover{border-color:var(--accent)}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--purple-bg);border:1px solid var(--purple);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--purple);flex-shrink:0}
+.client-info{flex:1;min-width:0}
+.client-name{font-size:14px;font-weight:600;margin-bottom:3px}
+.client-demand{font-size:13px;color:var(--muted);margin-bottom:6px}
+.client-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.client-email{font-size:11px;color:var(--muted)}
+
+/* RESSOURCES */
+.res-section{margin-bottom:20px}
+.res-section-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.res-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 15px;margin-bottom:6px}
+.res-name{font-size:14px;font-weight:500;margin-bottom:3px}
+.res-link{font-size:12px;color:var(--accent);word-break:break-all;margin-bottom:3px}
+.res-notes{font-size:12px;color:var(--muted);font-style:italic}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;width:100%;max-width:500px}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:18px}
+.form-group{margin-bottom:12px}
+.form-group label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px;font-weight:500}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;padding:8px 11px;outline:none;transition:border-color 0.15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
+.form-group select option{background:var(--card)}
+.form-group textarea{resize:vertical;min-height:70px;font-family:inherit}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.btn-cancel{padding:8px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:13px}
+.btn-cancel:hover{color:var(--text)}
+.btn-save{padding:8px 18px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.btn-save:hover{opacity:0.85}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px}
+.empty-icon{font-size:32px;margin-bottom:8px}
+
+/* SECTION DIVIDER */
+.section-divider{margin:20px 0 14px;font-size:13px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:8px}
+.section-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Priko<em>novenie</em> Hub</div>
+  <div class="topbar-right">
+    <div class="member-pill">
+      <label>Vue :</label>
+      <select id="memberFilter" onchange="filterByMember()">
+        <option value="all">Toute l'équipe</option>
+        <option>Frédéric</option><option>Sabine</option><option>Annie</option>
+        <option>Loïg</option><option>Estelle</option><option>Céline</option>
+        <option>Natacha</option><option>Thomas</option><option>Mathis</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="showView('dashboard',this)">🏠 Tableau de bord</button>
+  <button class="nav-btn" onclick="showView('taches',this)">✅ Tâches <span class="count" id="cnt-taches">0</span></button>
+  <button class="nav-btn" onclick="showView('sav',this)">🔧 SAV clients <span class="count" id="cnt-sav">0</span></button>
+  <button class="nav-btn" onclick="showView('clients',this)">👥 Clients</button>
+  <button class="nav-btn" onclick="showView('site',this)">🌐 Technique site</button>
+  <button class="nav-btn" onclick="showView('ressources',this)">📁 Ressources</button>
+</div>
+
+<div class="content">
+
+<!-- DASHBOARD -->
+<div id="view-dashboard" class="view active">
+  <div class="stats" id="statsGrid"></div>
+  <div class="section-divider">🔴 Urgences</div>
+  <div class="tasks" id="urgList"></div>
+  <div class="section-divider">🟠 Cette semaine</div>
+  <div class="tasks" id="weekList"></div>
+  <div class="section-divider">🔧 SAV ouverts</div>
+  <div id="savDash"></div>
+</div>
+
+<!-- TÂCHES -->
+<div id="view-taches" class="view">
+  <div class="section-top">
+    <div class="section-title">✅ Toutes les tâches</div>
+    <button class="add-btn" onclick="openForm('tache')">+ Nouvelle tâche</button>
+  </div>
+  <div class="filters">
+    <button class="chip active" onclick="setFilter('task','all',this)">Toutes</button>
+    <button class="chip" onclick="setFilter('task','urgent',this)">🔴 Urgent</button>
+    <button class="chip" onclick="setFilter('task','En cours',this)">En cours</button>
+    <button class="chip" onclick="setFilter('task','A traiter',this)">À traiter</button>
+    <button class="chip" onclick="setFilter('task','Fiche produit',this)">Fiches produits</button>
+    <button class="chip" onclick="setFilter('task','Video',this)">Vidéos</button>
+    <button class="chip" onclick="setFilter('task','Newsletter',this)">Newsletter</button>
+    <button class="chip" onclick="setFilter('task','done',this)">Terminées</button>
+  </div>
+  <div class="tasks" id="tasksList"></div>
+</div>
+
+<!-- SAV CLIENTS -->
+<div id="view-sav" class="view">
+  <div class="section-top">
+    <div class="section-title">🔧 SAV clients</div>
+    <button class="add-btn" onclick="openForm('sav')">+ Nouveau SAV</button>
+  </div>
+  <div class="filters">
+    <button class="chip active" onclick="setFilter('sav','all',this)">Tous</button>
+    <button class="chip" onclick="setFilter('sav','En cours',this)">En cours</button>
+    <button class="chip" onclick="setFilter('sav','En attente',this)">En attente</button>
+    <button class="chip" onclick="setFilter('sav','Résolu',this)">Résolus</button>
+  </div>
+  <div id="savList"></div>
+</div>
+
+<!-- CLIENTS -->
+<div id="view-clients" class="view">
+  <div class="section-top">
+    <div class="section-title">👥 Clients & prospects</div>
+    <button class="add-btn" onclick="openForm('client')">+ Nouveau client</button>
+  </div>
+  <div class="filters">
+    <button class="chip active" onclick="setFilter('client','all',this)">Tous</button>
+    <button class="chip" onclick="setFilter('client','A relancer',this)">À relancer</button>
+    <button class="chip" onclick="setFilter('client','Prioritaire',this)">Prioritaires</button>
+    <button class="chip" onclick="setFilter('client','VIP',this)">VIP</button>
+    <button class="chip" onclick="setFilter('client','Prospect',this)">Prospects</button>
+  </div>
+  <div id="clientsList"></div>
+</div>
+
+<!-- TECHNIQUE SITE -->
+<div id="view-site" class="view">
+  <div class="section-top">
+    <div class="section-title">🌐 Technique site</div>
+    <button class="add-btn" onclick="openForm('site')">+ Nouvelle tâche</button>
+  </div>
+  <div class="filters">
+    <button class="chip active" onclick="setFilter('site','all',this)">Toutes</button>
+    <button class="chip" onclick="setFilter('site','Redirection',this)">Redirections</button>
+    <button class="chip" onclick="setFilter('site','Bug',this)">Bugs</button>
+    <button class="chip" onclick="setFilter('site','SEO',this)">SEO</button>
+    <button class="chip" onclick="setFilter('site','MAJ contenu',this)">MAJ contenu</button>
+  </div>
+  <div class="tasks" id="siteList"></div>
+</div>
+
+<!-- RESSOURCES -->
+<div id="view-ressources" class="view">
+  <div class="section-top">
+    <div class="section-title">📁 Ressources & liens utiles</div>
+    <button class="add-btn" onclick="openForm('ressource')">+ Ajouter</button>
+  </div>
+  <div id="resList"></div>
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle"></div>
+    <div id="modalBody"></div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" onclick="saveForm()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const MEMBERS=['Frédéric','Sabine','Annie','Loïg','Estelle','Céline','Natacha','Thomas','Mathis'];
+const TYPES=['Fiche produit','SAV','Technique site','Redirection','Newsletter','Réseaux sociaux','Vidéo','Graphisme','Administratif','Commercial','Sourcing','Formation','Réunion','Divers'];
+const PRIOS=['🔴 Urgent','🟠 Cette semaine','🟢 Pas urgent'];
+const STATUTS=['À traiter','En cours','En attente','Terminé','Pense-bête','Infos'];
+const UNIVERS=['Mandalia Music','Magic Mastering','Les deux','Général'];
+
+let currentMember='all',filters={task:'all',sav:'all',client:'all',site:'all'},currentForm='';
+
+const KEY='prikosnovenie_data';
+function loadData(){
+  try{return JSON.parse(localStorage.getItem(KEY))||defaultData();}catch(e){return defaultData();}
+}
+function saveData(){localStorage.setItem(KEY,JSON.stringify(data));}
+
+function defaultData(){return{
+  tasks:[
+    {id:1,title:'Matrix ND1 - DAC',assignee:'Thomas',type:'Fiche produit',univers:'Magic Mastering',priority:'🟢 Pas urgent',status:'Terminé',date:'02/06/2026',link:'https://www.homecinesolutions.fr/p/31764-matrix-audio-nd-1',notes:'Publié',done:true},
+    {id:2,title:'INNUOS Stream 1 — fiche produit',assignee:'Thomas',type:'Fiche produit',univers:'Magic Mastering',priority:'🟠 Cette semaine',status:'En cours',date:'02/06/2026',link:'',notes:'Image front à travailler',done:false},
+    {id:3,title:'Wellfloat Classic 4050 Type10',assignee:'Thomas',type:'Fiche produit',univers:'Magic Mastering',priority:'🟠 Cette semaine',status:'En cours',date:'22/06/2026',link:'https://hifiprovence.fr/produit/accessoires-et-optimisations/pieds-antivibratoire-decouplage-pointes/wellfloat-classic-4050-type10/',notes:'Poids et variantes à confirmer avec Frédéric',done:false},
+    {id:4,title:'Redirections URL produits supprimés',assignee:'Estelle',type:'Redirection',univers:'Mandalia Music',priority:'🔴 Urgent',status:'En cours',date:'01/04/2026',link:'',notes:'En cours depuis avril',done:false},
+    {id:5,title:'CGV mise à jour',assignee:'Frédéric',type:'Administratif',univers:'Les deux',priority:'🔴 Urgent',status:'En cours',date:'23/01/2026',link:'',notes:'',done:false},
+    {id:6,title:'Hébergement magic-mastering.com — résiliation',assignee:'Frédéric',type:'Administratif',univers:'Magic Mastering',priority:'🔴 Urgent',status:'À traiter',date:'20/03/2026',link:'',notes:'Renouvellement 1er nov 2026 — 523,68€ HT — RÉSILIATION À FAIRE',done:false},
+    {id:7,title:'Arborescence site Univers Showroom Mandalia',assignee:'Céline',type:'Commercial',univers:'Mandalia Music',priority:'🔴 Urgent',status:'À traiter',date:'29/06/2026',link:'',notes:'Pour le 10 juillet',done:false},
+    {id:8,title:'Ajouter vidéos tuto sur fiches produit',assignee:'Thomas',type:'Vidéo',univers:'Mandalia Music',priority:'🟠 Cette semaine',status:'En cours',date:'18/06/2026',link:'',notes:'',done:false},
+    {id:9,title:'Audit du site — vérifier URLs',assignee:'Estelle',type:'Technique site',univers:'Mandalia Music',priority:'🟢 Pas urgent',status:'À traiter',date:'28/05/2026',link:'',notes:'Vérifier URL et données inutiles',done:false},
+    {id:10,title:'Newsletter Mandalia Music',assignee:'Thomas',type:'Newsletter',univers:'Mandalia Music',priority:'🟠 Cette semaine',status:'À traiter',date:'',link:'',notes:'Mensuelle — à planifier',done:false},
+    {id:11,title:'Template réseaux sociaux',assignee:'Thomas',type:'Réseaux sociaux',univers:'Les deux',priority:'🟠 Cette semaine',status:'En cours',date:'',link:'',notes:'',done:false},
+    {id:12,title:'Liste PDF produits sous 30€ de marge',assignee:'Loïg',type:'Commercial',univers:'Mandalia Music',priority:'🟢 Pas urgent',status:'À traiter',date:'17/02/2026',link:'',notes:'Date de travail à définir avec Frédéric',done:false},
+    {id:13,title:'Présentation ampli KORA TB140 — vidéo',assignee:'Thomas',type:'Vidéo',univers:'Magic Mastering',priority:'🟠 Cette semaine',status:'À traiter',date:'',link:'',notes:'Format horizontal, longue durée',done:false},
+    {id:14,title:'Saisie commande Hamy Sound + création produit Luksin',assignee:'Natacha',type:'Administratif',univers:'Mandalia Music',priority:'🟢 Pas urgent',status:'Terminé',date:'26/06/2026',link:'',notes:'',done:true},
+    {id:15,title:'MODULE PACKLINK — voir fonctionnement',assignee:'Estelle',type:'Technique site',univers:'Magic Mastering',priority:'🟢 Pas urgent',status:'Terminé',date:'28/05/2026',link:'',notes:'Sendcloud paraît la meilleure option',done:true},
+  ],
+  sav:[
+    {id:1,client:'CUYLITS Astrid',commande:'231057',problem:'Handpan reçu 9 notes au lieu de 10 notes — retour OK',status:'En cours',date:'07/04/2026',notes:'Mis de côté dans cuisine — CZ009913036BE'},
+    {id:2,client:'LAVAUD Sonia',commande:'235027',problem:'Retour Sansula — envoyer nouvelle Aria à réception retour',status:'En attente retour client',date:'12/05/2026',notes:'N° colis retour : CZ200163239FR'},
+    {id:3,client:'BAZILE Blandine',commande:'236423',problem:'Arbre de pluie couleur défectueux',status:'En cours',date:'23/06/2026',notes:'En attente voir si conseils SAV ok pour résoudre pb'},
+    {id:4,client:'ORAIN Ingrid',commande:'235843',problem:'Sansula cassée à réception — retour pour remboursement',status:'En cours',date:'05/06/2026',notes:''},
+    {id:5,client:'RODRIGUEZ Elisa',commande:'235538',problem:'Étui flûte taille M au lieu de L — retour + réexpédition',status:'Résolu',date:'01/06/2026',notes:'Réglé'},
+    {id:6,client:'CAPTAIN Sylvie',commande:'235945',problem:'Tubalo 6 tubes reçu au lieu de 9 tubes MAND3385',status:'En cours',date:'04/06/2026',notes:''},
+    {id:7,client:'LEFEBRE Mathias',commande:'',problem:'VINSHINE À REMBOURSER — 240 euros',status:'En cours',date:'16/06/2026',notes:'PRIORITAIRE — mathiaslefebvre055@gmail.com'},
+  ],
+  clients:[
+    {id:1,nom:'Neveu',prenom:'Xavier',demand:'A14+ système Atessa passif',status:'A relancer',priority:'Haute',email:'xavierneveu@hotmail.com',notes:'AUJ'},
+    {id:2,nom:'Pouplard',prenom:'',demand:'Budget 10 000 / 13 000€',status:'Prioritaire',priority:'Haute',email:'pistache18@gmail.com',notes:''},
+    {id:3,nom:'Pendu',prenom:'Roger',demand:'ATALANTE A3',status:'Prioritaire',priority:'Haute',email:'roger.pendu@club-internet.fr',notes:''},
+    {id:4,nom:'Hernandez',prenom:'Christophe',demand:'TKlizer 2 / TEQ',status:'A relancer',priority:'Haute',email:'tcmrabastens@gmail.com',notes:'AUJ'},
+    {id:5,nom:'Gauvreau',prenom:'Benoit',demand:'Système hifi Février Mars',status:'A relancer',priority:'Haute',email:'acouben@gmail.com',notes:'AUJ'},
+    {id:6,nom:'Lefebre',prenom:'Mathias',demand:'VINSHINE À REMBOURSER 240 euros',status:'Prioritaire',priority:'Haute',email:'mathiaslefebvre055@gmail.com',notes:'URGENT'},
+    {id:7,nom:'Kozlevcar',prenom:'Olivier',demand:'Kit Lumin',status:'VIP',priority:'Basse',email:'okozlevcar@yahoo.fr',notes:'Terminé'},
+    {id:8,nom:'Tremlet',prenom:'Éric',demand:'Amphion 7LX',status:'A relancer',priority:'Haute',email:'eric.tremlet@club-internet.fr',notes:'0769256925'},
+  ],
+  site:[
+    {id:1,task:'Redirections URL produits supprimés',type:'Redirection',site:'Mandalia Music',status:'En cours',deadline:'30/06/2026'},
+    {id:2,task:'Diapason-2 — URL à corriger pour SEO',type:'SEO',site:'Mandalia Music',status:'À traiter',deadline:''},
+    {id:3,task:'Changer vidéos sur site (onglet vidéo)',type:'MAJ contenu',site:'Mandalia Music',status:'À traiter',deadline:''},
+    {id:4,task:'Mots clefs — audit et optimisation',type:'SEO',site:'Mandalia Music',status:'À traiter',deadline:'12/06/2026'},
+    {id:5,task:'Problème PAYBOX / Verifone',type:'Bug',site:'Magic Mastering',status:'En cours',deadline:''},
+    {id:6,task:'Modèle page produit nouveau site — wireframe',type:'MAJ contenu',site:'Les deux',status:'En cours',deadline:''},
+    {id:7,task:'Voir si pertinent de garder assurance AXA pour colis',type:'Administratif',site:'Les deux',status:'À traiter',deadline:''},
+  ],
+  ressources:[
+    {id:1,cat:'Contacts utiles',nom:'Kalélia — Laure Ménard',lien:'lmenard@kalelia.fr / 02 85 67 05 60',notes:'Support technique site'},
+    {id:2,cat:'Contacts utiles',nom:'Magic Mastering blog — Sandra Nikolic',lien:'snikolic@cfiatlantique.com',notes:'Contact pour fermeture blog'},
+    {id:3,cat:'Sourcing instruments',nom:'Battiloro Handpan',lien:'https://www.battilorohandpan.com/fr/2-shop',notes:'Handpan à choisir'},
+    {id:4,cat:'Sourcing instruments',nom:'Gongwerkstatt',lien:'https://gongwerkstatt.de/traditional/',notes:'En contact'},
+    {id:5,cat:'Sourcing instruments',nom:'Savita Studio',lien:'https://savitastudio.com/',notes:'Handpan, metal drum'},
+    {id:6,cat:'Sourcing instruments',nom:'Crystal Harps',lien:'https://crystalharps.com/',notes:'Harpe de cristal et tube en cristal'},
+    {id:7,cat:'Sourcing HiFi',nom:'Garlubidor',lien:'https://www.garlubidor.com/',notes:'DAC'},
+    {id:8,cat:'Sourcing HiFi',nom:'NUR Headphones',lien:'https://www.nurheadphones.com/en/reviews/',notes:'Casques'},
+    {id:9,cat:'Sourcing HiFi',nom:'Headfonia Best of 2025',lien:'https://audioessence.ch/blogs/news/headfonia-best-of-year-2025-awards',notes:'Best of casques/DAC'},
+  ]
+};}
+
+let data=loadData();
+
+function showView(v,btn){
+  document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  btn.classList.add('active');
+  renderAll();
+}
+
+function filterByMember(){currentMember=document.getElementById('memberFilter').value;renderAll();}
+
+function setFilter(type,val,btn){
+  filters[type]=val;
+  btn.closest('.filters').querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  if(type==='task')renderTasks();
+  else if(type==='sav')renderSav();
+  else if(type==='client')renderClients();
+  else if(type==='site')renderSite();
+}
+
+function myTasks(){return data.tasks.filter(t=>currentMember==='all'||t.assignee===currentMember);}
+
+function priorityOrder(p){return p==='🔴 Urgent'?0:p==='🟠 Cette semaine'?1:2;}
+
+function taskHTML(t){
+  const pTag=t.priority==='🔴 Urgent'?'<span class="tag tag-urgent">Urgent</span>':t.priority==='🟠 Cette semaine'?'<span class="tag tag-week">Cette semaine</span>':'<span class="tag tag-ok">Pas urgent</span>';
+  const mem=currentMember==='all'?`<span class="tag tag-member">${t.assignee}</span>`:'';
+  return`<div class="task${t.done?' done':''}" onclick="toggleDone(${t.id})">
+    <div class="task-cb${t.done?' checked':''}"></div>
+    <div class="task-body">
+      <div class="task-title">${t.title}</div>
+      <div class="task-meta">${pTag}<span class="tag tag-type">${t.type}</span><span class="tag tag-accent">${t.univers}</span>${mem}${t.date?`<span class="task-date">${t.date}</span>`:''}</div>
+      ${t.notes?`<div class="task-notes">${t.notes}</div>`:''}
+    </div>
+  </div>`;
+}
+
+function toggleDone(id){
+  const t=data.tasks.find(x=>x.id===id);
+  if(t){t.done=!t.done;if(t.done)t.status='Terminé';saveData();}
+  renderAll();
+}
+
+function renderDashboard(){
+  const tasks=myTasks();
+  const urg=tasks.filter(t=>t.priority==='🔴 Urgent'&&!t.done);
+  const week=tasks.filter(t=>t.priority==='🟠 Cette semaine'&&!t.done);
+  const active=tasks.filter(t=>!t.done);
+  const savOpen=data.sav.filter(s=>s.status!=='Résolu');
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat blue"><div class="stat-num">${active.length}</div><div class="stat-label">Tâches actives</div></div>
+    <div class="stat red"><div class="stat-num">${urg.length}</div><div class="stat-label">Urgences</div></div>
+    <div class="stat orange"><div class="stat-num">${week.length}</div><div class="stat-label">Cette semaine</div></div>
+    <div class="stat red"><div class="stat-num">${savOpen.length}</div><div class="stat-label">SAV ouverts</div></div>
+  `;
+  document.getElementById('urgList').innerHTML=urg.length?urg.map(taskHTML).join(''):'<div class="empty"><div class="empty-icon">✅</div>Aucune urgence</div>';
+  document.getElementById('weekList').innerHTML=week.length?week.slice(0,5).map(taskHTML).join(''):'<div class="empty">Aucune tâche cette semaine</div>';
+  const sc={En cours:'tag-urgent','En attente retour client':'tag-week','En attente retour fournisseur':'tag-week','Résolu':'tag-ok'};
+  document.getElementById('savDash').innerHTML=savOpen.length?savOpen.slice(0,4).map(s=>`<div class="sav-card"><div class="sav-header"><div class="sav-client">${s.client}</div>${s.commande?`<div class="sav-cmd">#${s.commande}</div>`:''}</div><div class="sav-problem">${s.problem}</div><div class="sav-footer"><span class="tag ${sc[s.status]||'tag-type'}">${s.status}</span><span class="task-date">${s.date}</span></div></div>`).join(''):'<div class="empty">Aucun SAV ouvert</div>';
+  document.getElementById('cnt-taches').textContent=active.length;
+  document.getElementById('cnt-sav').textContent=savOpen.length;
+}
+
+function renderTasks(){
+  let tasks=myTasks();
+  const f=filters.task;
+  if(f==='urgent')tasks=tasks.filter(t=>t.priority==='🔴 Urgent'&&!t.done);
+  else if(f==='done')tasks=tasks.filter(t=>t.done);
+  else if(f==='all')tasks=tasks.filter(t=>!t.done);
+  else if(f==='Fiche produit')tasks=tasks.filter(t=>t.type==='Fiche produit'&&!t.done);
+  else if(f==='Video')tasks=tasks.filter(t=>t.type==='Vidéo'&&!t.done);
+  else if(f==='Newsletter')tasks=tasks.filter(t=>t.type==='Newsletter'&&!t.done);
+  else tasks=tasks.filter(t=>t.status===f&&!t.done);
+  tasks.sort((a,b)=>priorityOrder(a.priority)-priorityOrder(b.priority));
+  document.getElementById('tasksList').innerHTML=tasks.length?tasks.map(taskHTML).join(''):'<div class="empty"><div class="empty-icon">🎉</div>Aucune tâche ici</div>';
+}
+
+function renderSav(){
+  let list=data.sav;
+  const f=filters.sav;
+  if(f==='En cours')list=list.filter(s=>s.status==='En cours');
+  else if(f==='En attente')list=list.filter(s=>s.status.includes('attente'));
+  else if(f==='Résolu')list=list.filter(s=>s.status==='Résolu');
+  const sc={En cours:'tag-urgent','En attente retour client':'tag-week','En attente retour fournisseur':'tag-week','Résolu':'tag-ok'};
+  document.getElementById('savList').innerHTML=list.length?list.map(s=>`<div class="sav-card"><div class="sav-header"><div class="sav-client">${s.client}</div>${s.commande?`<div class="sav-cmd">#${s.commande}</div>`:''}</div><div class="sav-problem">${s.problem}</div><div class="sav-footer"><span class="tag ${sc[s.status]||'tag-type'}">${s.status}</span><span class="task-date">${s.date}</span>${s.notes?`<span class="sav-notes">${s.notes}</span>`:''}</div></div>`).join(''):'<div class="empty">Aucun SAV</div>';
+}
+
+function renderClients(){
+  let list=data.clients;
+  const f=filters.client;
+  if(f!=='all')list=list.filter(c=>c.status===f);
+  const sc={'A relancer':'tag-urgent','Prioritaire':'tag-urgent','VIP':'tag-week','Prospect':'tag-accent','Client actif':'tag-ok','Inactif':'tag-type'};
+  const ini=c=>((c.prenom||'').charAt(0)+(c.nom||'').charAt(0)).toUpperCase();
+  document.getElementById('clientsList').innerHTML=list.length?list.map(c=>`<div class="client-card"><div class="avatar">${ini(c)}</div><div class="client-info"><div class="client-name">${c.prenom?c.prenom+' ':''}${c.nom}</div><div class="client-demand">${c.demand}</div><div class="client-meta"><span class="tag ${sc[c.status]||'tag-type'}">${c.status}</span>${c.email?`<span class="client-email">${c.email}</span>`:''}</div></div></div>`).join(''):'<div class="empty">Aucun client</div>';
+}
+
+function renderSite(){
+  let list=data.site;
+  const f=filters.site;
+  if(f!=='all')list=list.filter(s=>s.type===f);
+  const sc={'En cours':'tag-week','À traiter':'tag-type','Terminé':'tag-ok'};
+  document.getElementById('siteList').innerHTML=list.length?list.map(s=>`<div class="task"><div class="task-body"><div class="task-title">${s.task}</div><div class="task-meta"><span class="tag ${sc[s.status]||'tag-type'}">${s.status}</span><span class="tag tag-type">${s.type}</span><span class="tag tag-accent">${s.site}</span>${s.deadline?`<span class="task-date">📅 ${s.deadline}</span>`:''}</div></div></div>`).join(''):'<div class="empty">Aucune tâche technique</div>';
+}
+
+function renderRessources(){
+  const cats=[...new Set(data.ressources.map(r=>r.cat))];
+  document.getElementById('resList').innerHTML=cats.map(cat=>`<div class="res-section"><div class="res-section-title">${cat}</div>${data.ressources.filter(r=>r.cat===cat).map(r=>`<div class="res-card"><div class="res-name">${r.nom}</div><div class="res-link">${r.lien}</div>${r.notes?`<div class="res-notes">${r.notes}</div>`:''}</div>`).join('')}</div>`).join('');
+}
+
+function renderAll(){renderDashboard();renderTasks();renderSav();renderClients();renderSite();renderRessources();}
+
+// FORMS
+const FORMS={
+  tache:`<div class="form-group"><label>Titre de la tâche *</label><input id="f_title" type="text" placeholder="Ex: Fiche produit Matrix ND2"></div>
+    <div class="form-row"><div class="form-group"><label>Assigné à *</label><select id="f_assignee">${MEMBERS.map(m=>`<option>${m}</option>`).join('')}</select></div><div class="form-group"><label>Type</label><select id="f_type">${TYPES.map(t=>`<option>${t}</option>`).join('')}</select></div></div>
+    <div class="form-row"><div class="form-group"><label>Priorité</label><select id="f_priority">${PRIOS.map(p=>`<option>${p}</option>`).join('')}</select></div><div class="form-group"><label>Statut</label><select id="f_status">${STATUTS.map(s=>`<option>${s}</option>`).join('')}</select></div></div>
+    <div class="form-row"><div class="form-group"><label>Univers</label><select id="f_univers">${UNIVERS.map(u=>`<option>${u}</option>`).join('')}</select></div><div class="form-group"><label>Deadline</label><input id="f_date" type="text" placeholder="jj/mm/aaaa"></div></div>
+    <div class="form-group"><label>Lien produit (URL)</label><input id="f_link" type="text" placeholder="https://..."></div>
+    <div class="form-group"><label>Notes / Instructions</label><textarea id="f_notes" placeholder="Détails, instructions pour la personne..."></textarea></div>`,
+  sav:`<div class="form-group"><label>Nom client *</label><input id="f_client" type="text"></div>
+    <div class="form-row"><div class="form-group"><label>N° commande</label><input id="f_cmd" type="text"></div><div class="form-group"><label>Statut</label><select id="f_status"><option>En cours</option><option>En attente retour client</option><option>En attente retour fournisseur</option><option>Résolu</option></select></div></div>
+    <div class="form-group"><label>Problème *</label><textarea id="f_problem"></textarea></div>
+    <div class="form-group"><label>Notes</label><textarea id="f_notes"></textarea></div>`,
+  client:`<div class="form-row"><div class="form-group"><label>Nom *</label><input id="f_nom" type="text"></div><div class="form-group"><label>Prénom</label><input id="f_prenom" type="text"></div></div>
+    <div class="form-row"><div class="form-group"><label>Email</label><input id="f_email" type="email"></div><div class="form-group"><label>Téléphone</label><input id="f_tel" type="text"></div></div>
+    <div class="form-row"><div class="form-group"><label>Statut</label><select id="f_status"><option>Prospect</option><option>A relancer</option><option>Prioritaire</option><option>VIP</option><option>Client actif</option><option>Inactif</option></select></div><div class="form-group"><label>Priorité</label><select id="f_priority"><option>Haute</option><option>Moyenne</option><option>Basse</option></select></div></div>
+    <div class="form-group"><label>Demande en cours</label><input id="f_demand" type="text"></div>
+    <div class="form-group"><label>Notes</label><textarea id="f_notes"></textarea></div>`,
+  site:`<div class="form-group"><label>Tâche / Description *</label><input id="f_task" type="text"></div>
+    <div class="form-row"><div class="form-group"><label>Type</label><select id="f_type"><option>Redirection</option><option>MAJ contenu</option><option>SEO</option><option>Bug</option><option>Audit</option><option>Module</option><option>Administratif</option></select></div><div class="form-group"><label>Site</label><select id="f_site"><option>Mandalia Music</option><option>Magic Mastering</option><option>Les deux</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label>Statut</label><select id="f_status"><option>À traiter</option><option>En cours</option><option>Terminé</option></select></div><div class="form-group"><label>Deadline</label><input id="f_deadline" type="text" placeholder="jj/mm/aaaa"></div></div>
+    <div class="form-group"><label>URL origine</label><input id="f_url_from" type="text" placeholder="https://..."></div>
+    <div class="form-group"><label>URL destination</label><input id="f_url_to" type="text" placeholder="https://..."></div>`,
+  ressource:`<div class="form-row"><div class="form-group"><label>Catégorie</label><select id="f_cat"><option>Contacts utiles</option><option>Sourcing instruments</option><option>Sourcing HiFi</option><option>Notices instruments</option><option>Procédures internes</option><option>Mails types</option><option>Autre</option></select></div><div class="form-group"><label>Nom *</label><input id="f_nom" type="text"></div></div>
+    <div class="form-group"><label>Lien / Email / Téléphone</label><input id="f_lien" type="text"></div>
+    <div class="form-group"><label>Notes</label><textarea id="f_notes"></textarea></div>`
+};
+const FORM_TITLES={tache:'Nouvelle tâche',sav:'Nouveau SAV client',client:'Nouveau client / prospect',site:'Nouvelle tâche technique',ressource:'Nouvelle ressource'};
+
+function openForm(type){
+  currentForm=type;
+  document.getElementById('modalTitle').textContent=FORM_TITLES[type];
+  document.getElementById('modalBody').innerHTML=FORMS[type];
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('open');}
+document.getElementById('modalBg').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+function g(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+
+function saveForm(){
+  const id=Date.now();
+  if(currentForm==='tache'){
+    if(!g('f_title'))return alert('Le titre est obligatoire');
+    data.tasks.unshift({id,title:g('f_title'),assignee:g('f_assignee'),type:g('f_type'),univers:g('f_univers'),priority:g('f_priority'),status:g('f_status'),date:g('f_date')||new Date().toLocaleDateString('fr-FR'),link:g('f_link'),notes:g('f_notes'),done:false});
+  }else if(currentForm==='sav'){
+    if(!g('f_client'))return alert('Le nom client est obligatoire');
+    data.sav.unshift({id,client:g('f_client'),commande:g('f_cmd'),problem:g('f_problem'),status:g('f_status'),date:new Date().toLocaleDateString('fr-FR'),notes:g('f_notes')});
+  }else if(currentForm==='client'){
+    if(!g('f_nom'))return alert('Le nom est obligatoire');
+    data.clients.unshift({id,nom:g('f_nom'),prenom:g('f_prenom'),email:g('f_email'),tel:g('f_tel'),demand:g('f_demand'),status:g('f_status'),priority:g('f_priority'),notes:g('f_notes')});
+  }else if(currentForm==='site'){
+    if(!g('f_task'))return alert('La description est obligatoire');
+    data.site.unshift({id,task:g('f_task'),type:g('f_type'),site:g('f_site'),status:g('f_status'),deadline:g('f_deadline')});
+  }else if(currentForm==='ressource'){
+    if(!g('f_nom'))return alert('Le nom est obligatoire');
+    data.ressources.unshift({id,cat:g('f_cat'),nom:g('f_nom'),lien:g('f_lien'),notes:g('f_notes')});
+  }
+  saveData();closeModal();renderAll();
+}
+
+renderAll();
+</script>
+</body>
+</html>
