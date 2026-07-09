@@ -193,7 +193,7 @@ a{color:inherit;text-decoration:none}
     <button class="chip active" onclick="setFilter('task','all',this)">Toutes</button>
     <button class="chip" onclick="setFilter('task','urgent',this)">🔴 Urgent</button>
     <button class="chip" onclick="setFilter('task','En cours',this)">En cours</button>
-    <button class="chip" onclick="setFilter('task','A traiter',this)">À traiter</button>
+    <button class="chip" onclick="setFilter('task','A traiter',this)">A traiter</button>
     <button class="chip" onclick="setFilter('task','Fiche produit',this)">Fiches produits</button>
     <button class="chip" onclick="setFilter('task','Video',this)">Vidéos</button>
     <button class="chip" onclick="setFilter('task','Newsletter',this)">Newsletter</button>
@@ -274,9 +274,9 @@ a{color:inherit;text-decoration:none}
 
 <script>
 const MEMBERS=['Frédéric','Sabine','Annie','Loïg','Estelle','Céline','Natacha','Thomas','Mathis'];
-const TYPES=['Fiche produit','SAV','Technique site','Redirection','Newsletter','Réseaux sociaux','Vidéo','Graphisme','Administratif','Commercial','Sourcing','Formation','Réunion','Divers'];
+const TYPES=['Fiche produit','SAV','Technique site','Redirection','Newsletter','Reseaux sociaux','Vidéo','Graphisme','Administratif','Commercial','Sourcing','Formation','Réunion','Divers'];
 const PRIOS=['🔴 Urgent','🟠 Cette semaine','🟢 Pas urgent'];
-const STATUTS=['À traiter','En cours','En attente','Terminé','Pense-bête','Infos'];
+const STATUTS=['A traiter','En cours','En attente','Terminé','Pense-bête','Infos'];
 const UNIVERS=['Mandalia Music','Magic Mastering','Les deux','Général'];
 
 let currentMember='all',filters={task:'all',sav:'all',client:'all',site:'all'},currentForm='';
@@ -292,26 +292,26 @@ function defaultData(){return{
     {id:1,title:'Matrix ND1 - DAC',assignee:'Thomas',type:'Fiche produit',univers:'Magic Mastering',priority:'🟢 Pas urgent',status:'Terminé',date:'02/06/2026',link:'https://www.homecinesolutions.fr/p/31764-matrix-audio-nd-1',notes:'Publié',done:true},
     {id:2,title:'INNUOS Stream 1 — fiche produit',assignee:'Thomas',type:'Fiche produit',univers:'Magic Mastering',priority:'🟠 Cette semaine',status:'En cours',date:'02/06/2026',link:'',notes:'Image front à travailler',done:false},
     {id:3,title:'Wellfloat Classic 4050 Type10',assignee:'Thomas',type:'Fiche produit',univers:'Magic Mastering',priority:'🟠 Cette semaine',status:'En cours',date:'22/06/2026',link:'https://hifiprovence.fr/produit/accessoires-et-optimisations/pieds-antivibratoire-decouplage-pointes/wellfloat-classic-4050-type10/',notes:'Poids et variantes à confirmer avec Frédéric',done:false},
-    {id:4,title:'Redirections URL produits supprimés',assignee:'Estelle',type:'Redirection',univers:'Mandalia Music',priority:'🔴 Urgent',status:'En cours',date:'01/04/2026',link:'',notes:'En cours depuis avril',done:false},
+    {id:4,title:'Redirections URL produits supprimes',assignee:'Estelle',type:'Redirection',univers:'Mandalia Music',priority:'🔴 Urgent',status:'En cours',date:'01/04/2026',link:'',notes:'En cours depuis avril',done:false},
     {id:5,title:'CGV mise à jour',assignee:'Frédéric',type:'Administratif',univers:'Les deux',priority:'🔴 Urgent',status:'En cours',date:'23/01/2026',link:'',notes:'',done:false},
-    {id:6,title:'Hébergement magic-mastering.com — résiliation',assignee:'Frédéric',type:'Administratif',univers:'Magic Mastering',priority:'🔴 Urgent',status:'À traiter',date:'20/03/2026',link:'',notes:'Renouvellement 1er nov 2026 — 523,68€ HT — RÉSILIATION À FAIRE',done:false},
-    {id:7,title:'Arborescence site Univers Showroom Mandalia',assignee:'Céline',type:'Commercial',univers:'Mandalia Music',priority:'🔴 Urgent',status:'À traiter',date:'29/06/2026',link:'',notes:'Pour le 10 juillet',done:false},
+    {id:6,title:'Hebergement magic-mastering.com — resiliation',assignee:'Frédéric',type:'Administratif',univers:'Magic Mastering',priority:'🔴 Urgent',status:'A traiter',date:'20/03/2026',link:'',notes:'Renouvellement 1er nov 2026 — 523,68€ HT — RÉSILIATION À FAIRE',done:false},
+    {id:7,title:'Arborescence site Univers Showroom Mandalia',assignee:'Céline',type:'Commercial',univers:'Mandalia Music',priority:'🔴 Urgent',status:'A traiter',date:'29/06/2026',link:'',notes:'Pour le 10 juillet',done:false},
     {id:8,title:'Ajouter vidéos tuto sur fiches produit',assignee:'Thomas',type:'Vidéo',univers:'Mandalia Music',priority:'🟠 Cette semaine',status:'En cours',date:'18/06/2026',link:'',notes:'',done:false},
-    {id:9,title:'Audit du site — vérifier URLs',assignee:'Estelle',type:'Technique site',univers:'Mandalia Music',priority:'🟢 Pas urgent',status:'À traiter',date:'28/05/2026',link:'',notes:'Vérifier URL et données inutiles',done:false},
-    {id:10,title:'Newsletter Mandalia Music',assignee:'Thomas',type:'Newsletter',univers:'Mandalia Music',priority:'🟠 Cette semaine',status:'À traiter',date:'',link:'',notes:'Mensuelle — à planifier',done:false},
-    {id:11,title:'Template réseaux sociaux',assignee:'Thomas',type:'Réseaux sociaux',univers:'Les deux',priority:'🟠 Cette semaine',status:'En cours',date:'',link:'',notes:'',done:false},
-    {id:12,title:'Liste PDF produits sous 30€ de marge',assignee:'Loïg',type:'Commercial',univers:'Mandalia Music',priority:'🟢 Pas urgent',status:'À traiter',date:'17/02/2026',link:'',notes:'Date de travail à définir avec Frédéric',done:false},
-    {id:13,title:'Présentation ampli KORA TB140 — vidéo',assignee:'Thomas',type:'Vidéo',univers:'Magic Mastering',priority:'🟠 Cette semaine',status:'À traiter',date:'',link:'',notes:'Format horizontal, longue durée',done:false},
+    {id:9,title:'Audit du site — verifier URLs',assignee:'Estelle',type:'Technique site',univers:'Mandalia Music',priority:'🟢 Pas urgent',status:'A traiter',date:'28/05/2026',link:'',notes:'Vérifier URL et données inutiles',done:false},
+    {id:10,title:'Newsletter Mandalia Music',assignee:'Thomas',type:'Newsletter',univers:'Mandalia Music',priority:'🟠 Cette semaine',status:'A traiter',date:'',link:'',notes:'Mensuelle — à planifier',done:false},
+    {id:11,title:'Template reseaux sociaux',assignee:'Thomas',type:'Reseaux sociaux',univers:'Les deux',priority:'🟠 Cette semaine',status:'En cours',date:'',link:'',notes:'',done:false},
+    {id:12,title:'Liste PDF produits sous 30€ de marge',assignee:'Loïg',type:'Commercial',univers:'Mandalia Music',priority:'🟢 Pas urgent',status:'A traiter',date:'17/02/2026',link:'',notes:'Date de travail à définir avec Frédéric',done:false},
+    {id:13,title:'Presentation ampli KORA TB140 — vidéo',assignee:'Thomas',type:'Vidéo',univers:'Magic Mastering',priority:'🟠 Cette semaine',status:'A traiter',date:'',link:'',notes:'Format horizontal, longue durée',done:false},
     {id:14,title:'Saisie commande Hamy Sound + création produit Luksin',assignee:'Natacha',type:'Administratif',univers:'Mandalia Music',priority:'🟢 Pas urgent',status:'Terminé',date:'26/06/2026',link:'',notes:'',done:true},
     {id:15,title:'MODULE PACKLINK — voir fonctionnement',assignee:'Estelle',type:'Technique site',univers:'Magic Mastering',priority:'🟢 Pas urgent',status:'Terminé',date:'28/05/2026',link:'',notes:'Sendcloud paraît la meilleure option',done:true},
   ],
   sav:[
-    {id:1,client:'CUYLITS Astrid',commande:'231057',problem:'Handpan reçu 9 notes au lieu de 10 notes — retour OK',status:'En cours',date:'07/04/2026',notes:'Mis de côté dans cuisine — CZ009913036BE'},
-    {id:2,client:'LAVAUD Sonia',commande:'235027',problem:'Retour Sansula — envoyer nouvelle Aria à réception retour',status:'En attente retour client',date:'12/05/2026',notes:'N° colis retour : CZ200163239FR'},
-    {id:3,client:'BAZILE Blandine',commande:'236423',problem:'Arbre de pluie couleur défectueux',status:'En cours',date:'23/06/2026',notes:'En attente voir si conseils SAV ok pour résoudre pb'},
-    {id:4,client:'ORAIN Ingrid',commande:'235843',problem:'Sansula cassée à réception — retour pour remboursement',status:'En cours',date:'05/06/2026',notes:''},
-    {id:5,client:'RODRIGUEZ Elisa',commande:'235538',problem:'Étui flûte taille M au lieu de L — retour + réexpédition',status:'Résolu',date:'01/06/2026',notes:'Réglé'},
-    {id:6,client:'CAPTAIN Sylvie',commande:'235945',problem:'Tubalo 6 tubes reçu au lieu de 9 tubes MAND3385',status:'En cours',date:'04/06/2026',notes:''},
+    {id:1,client:'CUYLITS Astrid',commande:'231057',problem:'Handpan recu 9 notes au lieu de 10 notes — retour OK',status:'En cours',date:'07/04/2026',notes:'Mis de côté dans cuisine — CZ009913036BE'},
+    {id:2,client:'LAVAUD Sonia',commande:'235027',problem:'Retour Sansula — envoyer nouvelle Aria à reception retour',status:'En attente retour client',date:'12/05/2026',notes:'N° colis retour : CZ200163239FR'},
+    {id:3,client:'BAZILE Blandine',commande:'236423',problem:'Arbre de pluie couleur defectueux',status:'En cours',date:'23/06/2026',notes:'En attente voir si conseils SAV ok pour résoudre pb'},
+    {id:4,client:'ORAIN Ingrid',commande:'235843',problem:'Sansula cassee à reception — retour pour remboursement',status:'En cours',date:'05/06/2026',notes:''},
+    {id:5,client:'RODRIGUEZ Elisa',commande:'235538',problem:'Etui flûte taille M au lieu de L — retour + reexpedition',status:'Resolu',date:'01/06/2026',notes:'Réglé'},
+    {id:6,client:'CAPTAIN Sylvie',commande:'235945',problem:'Tubalo 6 tubes recu au lieu de 9 tubes MAND3385',status:'En cours',date:'04/06/2026',notes:''},
     {id:7,client:'LEFEBRE Mathias',commande:'',problem:'VINSHINE À REMBOURSER — 240 euros',status:'En cours',date:'16/06/2026',notes:'PRIORITAIRE — mathiaslefebvre055@gmail.com'},
   ],
   clients:[
@@ -325,13 +325,13 @@ function defaultData(){return{
     {id:8,nom:'Tremlet',prenom:'Éric',demand:'Amphion 7LX',status:'A relancer',priority:'Haute',email:'eric.tremlet@club-internet.fr',notes:'0769256925'},
   ],
   site:[
-    {id:1,task:'Redirections URL produits supprimés',type:'Redirection',site:'Mandalia Music',status:'En cours',deadline:'30/06/2026'},
-    {id:2,task:'Diapason-2 — URL à corriger pour SEO',type:'SEO',site:'Mandalia Music',status:'À traiter',deadline:''},
-    {id:3,task:'Changer vidéos sur site (onglet vidéo)',type:'MAJ contenu',site:'Mandalia Music',status:'À traiter',deadline:''},
-    {id:4,task:'Mots clefs — audit et optimisation',type:'SEO',site:'Mandalia Music',status:'À traiter',deadline:'12/06/2026'},
+    {id:1,task:'Redirections URL produits supprimes',type:'Redirection',site:'Mandalia Music',status:'En cours',deadline:'30/06/2026'},
+    {id:2,task:'Diapason-2 — URL à corriger pour SEO',type:'SEO',site:'Mandalia Music',status:'A traiter',deadline:''},
+    {id:3,task:'Changer vidéos sur site (onglet vidéo)',type:'MAJ contenu',site:'Mandalia Music',status:'A traiter',deadline:''},
+    {id:4,task:'Mots clefs — audit et optimisation',type:'SEO',site:'Mandalia Music',status:'A traiter',deadline:'12/06/2026'},
     {id:5,task:'Problème PAYBOX / Verifone',type:'Bug',site:'Magic Mastering',status:'En cours',deadline:''},
     {id:6,task:'Modèle page produit nouveau site — wireframe',type:'MAJ contenu',site:'Les deux',status:'En cours',deadline:''},
-    {id:7,task:'Voir si pertinent de garder assurance AXA pour colis',type:'Administratif',site:'Les deux',status:'À traiter',deadline:''},
+    {id:7,task:'Voir si pertinent de garder assurance AXA pour colis',type:'Administratif',site:'Les deux',status:'A traiter',deadline:''},
   ],
   ressources:[
     {id:1,cat:'Contacts utiles',nom:'Kalélia — Laure Ménard',lien:'lmenard@kalelia.fr / 02 85 67 05 60',notes:'Support technique site'},
@@ -396,7 +396,7 @@ function renderDashboard(){
   const urg=tasks.filter(t=>t.priority==='🔴 Urgent'&&!t.done);
   const week=tasks.filter(t=>t.priority==='🟠 Cette semaine'&&!t.done);
   const active=tasks.filter(t=>!t.done);
-  const savOpen=data.sav.filter(s=>s.status!=='Résolu');
+  const savOpen=data.sav.filter(s=>s.status!=='Resolu');
   document.getElementById('statsGrid').innerHTML=`
     <div class="stat blue"><div class="stat-num">${active.length}</div><div class="stat-label">Tâches actives</div></div>
     <div class="stat red"><div class="stat-num">${urg.length}</div><div class="stat-label">Urgences</div></div>
@@ -405,7 +405,7 @@ function renderDashboard(){
   `;
   document.getElementById('urgList').innerHTML=urg.length?urg.map(taskHTML).join(''):'<div class="empty"><div class="empty-icon">✅</div>Aucune urgence</div>';
   document.getElementById('weekList').innerHTML=week.length?week.slice(0,5).map(taskHTML).join(''):'<div class="empty">Aucune tâche cette semaine</div>';
-  const sc={En cours:'tag-urgent','En attente retour client':'tag-week','En attente retour fournisseur':'tag-week','Résolu':'tag-ok'};
+  const sc={'En cours':'tag-urgent','En attente retour client':'tag-week','En attente retour fournisseur':'tag-week','Resolu':'tag-ok'};
   document.getElementById('savDash').innerHTML=savOpen.length?savOpen.slice(0,4).map(s=>`<div class="sav-card"><div class="sav-header"><div class="sav-client">${s.client}</div>${s.commande?`<div class="sav-cmd">#${s.commande}</div>`:''}</div><div class="sav-problem">${s.problem}</div><div class="sav-footer"><span class="tag ${sc[s.status]||'tag-type'}">${s.status}</span><span class="task-date">${s.date}</span></div></div>`).join(''):'<div class="empty">Aucun SAV ouvert</div>';
   document.getElementById('cnt-taches').textContent=active.length;
   document.getElementById('cnt-sav').textContent=savOpen.length;
@@ -430,8 +430,8 @@ function renderSav(){
   const f=filters.sav;
   if(f==='En cours')list=list.filter(s=>s.status==='En cours');
   else if(f==='En attente')list=list.filter(s=>s.status.includes('attente'));
-  else if(f==='Résolu')list=list.filter(s=>s.status==='Résolu');
-  const sc={En cours:'tag-urgent','En attente retour client':'tag-week','En attente retour fournisseur':'tag-week','Résolu':'tag-ok'};
+  else if(f==='Resolu')list=list.filter(s=>s.status==='Resolu');
+  const sc={'En cours':'tag-urgent','En attente retour client':'tag-week','En attente retour fournisseur':'tag-week','Resolu':'tag-ok'};
   document.getElementById('savList').innerHTML=list.length?list.map(s=>`<div class="sav-card"><div class="sav-header"><div class="sav-client">${s.client}</div>${s.commande?`<div class="sav-cmd">#${s.commande}</div>`:''}</div><div class="sav-problem">${s.problem}</div><div class="sav-footer"><span class="tag ${sc[s.status]||'tag-type'}">${s.status}</span><span class="task-date">${s.date}</span>${s.notes?`<span class="sav-notes">${s.notes}</span>`:''}</div></div>`).join(''):'<div class="empty">Aucun SAV</div>';
 }
 
@@ -448,7 +448,7 @@ function renderSite(){
   let list=data.site;
   const f=filters.site;
   if(f!=='all')list=list.filter(s=>s.type===f);
-  const sc={'En cours':'tag-week','À traiter':'tag-type','Terminé':'tag-ok'};
+  const sc={'En cours':'tag-week','A traiter':'tag-type','Terminé':'tag-ok'};
   document.getElementById('siteList').innerHTML=list.length?list.map(s=>`<div class="task"><div class="task-body"><div class="task-title">${s.task}</div><div class="task-meta"><span class="tag ${sc[s.status]||'tag-type'}">${s.status}</span><span class="tag tag-type">${s.type}</span><span class="tag tag-accent">${s.site}</span>${s.deadline?`<span class="task-date">📅 ${s.deadline}</span>`:''}</div></div></div>`).join(''):'<div class="empty">Aucune tâche technique</div>';
 }
 
@@ -468,7 +468,7 @@ const FORMS={
     <div class="form-group"><label>Lien produit (URL)</label><input id="f_link" type="text" placeholder="https://..."></div>
     <div class="form-group"><label>Notes / Instructions</label><textarea id="f_notes" placeholder="Détails, instructions pour la personne..."></textarea></div>`,
   sav:`<div class="form-group"><label>Nom client *</label><input id="f_client" type="text"></div>
-    <div class="form-row"><div class="form-group"><label>N° commande</label><input id="f_cmd" type="text"></div><div class="form-group"><label>Statut</label><select id="f_status"><option>En cours</option><option>En attente retour client</option><option>En attente retour fournisseur</option><option>Résolu</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label>N° commande</label><input id="f_cmd" type="text"></div><div class="form-group"><label>Statut</label><select id="f_status"><option>En cours</option><option>En attente retour client</option><option>En attente retour fournisseur</option><option>Resolu</option></select></div></div>
     <div class="form-group"><label>Problème *</label><textarea id="f_problem"></textarea></div>
     <div class="form-group"><label>Notes</label><textarea id="f_notes"></textarea></div>`,
   client:`<div class="form-row"><div class="form-group"><label>Nom *</label><input id="f_nom" type="text"></div><div class="form-group"><label>Prénom</label><input id="f_prenom" type="text"></div></div>
@@ -478,7 +478,7 @@ const FORMS={
     <div class="form-group"><label>Notes</label><textarea id="f_notes"></textarea></div>`,
   site:`<div class="form-group"><label>Tâche / Description *</label><input id="f_task" type="text"></div>
     <div class="form-row"><div class="form-group"><label>Type</label><select id="f_type"><option>Redirection</option><option>MAJ contenu</option><option>SEO</option><option>Bug</option><option>Audit</option><option>Module</option><option>Administratif</option></select></div><div class="form-group"><label>Site</label><select id="f_site"><option>Mandalia Music</option><option>Magic Mastering</option><option>Les deux</option></select></div></div>
-    <div class="form-row"><div class="form-group"><label>Statut</label><select id="f_status"><option>À traiter</option><option>En cours</option><option>Terminé</option></select></div><div class="form-group"><label>Deadline</label><input id="f_deadline" type="text" placeholder="jj/mm/aaaa"></div></div>
+    <div class="form-row"><div class="form-group"><label>Statut</label><select id="f_status"><option>A traiter</option><option>En cours</option><option>Terminé</option></select></div><div class="form-group"><label>Deadline</label><input id="f_deadline" type="text" placeholder="jj/mm/aaaa"></div></div>
     <div class="form-group"><label>URL origine</label><input id="f_url_from" type="text" placeholder="https://..."></div>
     <div class="form-group"><label>URL destination</label><input id="f_url_to" type="text" placeholder="https://..."></div>`,
   ressource:`<div class="form-row"><div class="form-group"><label>Catégorie</label><select id="f_cat"><option>Contacts utiles</option><option>Sourcing instruments</option><option>Sourcing HiFi</option><option>Notices instruments</option><option>Procédures internes</option><option>Mails types</option><option>Autre</option></select></div><div class="form-group"><label>Nom *</label><input id="f_nom" type="text"></div></div>
